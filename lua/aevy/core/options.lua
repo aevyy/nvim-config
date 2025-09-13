@@ -34,3 +34,7 @@ opt.clipboard:append("unnamedplus") -- use system clipboard as default register
 -- split windows
 opt.splitright = true -- split vertical windot to the right
 opt.splitbelow = true -- split horizontal window to the bottom
+
+-- scrolling
+opt.scrolloff = 8 -- keep 8 lines above/below cursor when scrolling
+opt.sidescrolloff = 8 -- keep 8 columns left/right of cursor when scrolling
