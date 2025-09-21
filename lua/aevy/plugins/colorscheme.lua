@@ -224,9 +224,20 @@ return {
         end,
       })
 
-      -- Load the saved colorscheme or default
+      -- Load the saved colorscheme or default with better timing
       local saved_colorscheme = load_saved_colorscheme()
-      pcall(vim.cmd, "colorscheme " .. saved_colorscheme)
+      
+      -- Use VimEnter with higher priority to ensure it loads after all themes are set up
+      vim.api.nvim_create_autocmd("VimEnter", {
+        callback = function()
+          -- Additional delay to ensure all plugins are loaded
+          vim.defer_fn(function()
+            if vim.g.colors_name ~= saved_colorscheme then
+              pcall(vim.cmd, "colorscheme " .. saved_colorscheme)
+            end
+          end, 100)
+        end,
+      })
     end,
   },
 }
