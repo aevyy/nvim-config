@@ -59,6 +59,7 @@ keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase w
 -- tab management
 keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" })
 keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" })
+keymap.set("n", "<leader>x", "<cmd>tabclose<CR>", { desc = "Close current tab (quick)" })
 keymap.set("n", "<leader>tN", "<cmd>tabn<CR>", { desc = "Go to next tab" })
 keymap.set("n", "<leader>tP", "<cmd>tabp<CR>", { desc = "Go to previous tab" })
 keymap.set("n", "<leader>tF", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" })

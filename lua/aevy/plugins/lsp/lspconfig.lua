@@ -9,116 +9,143 @@ return {
     { "folke/neodev.nvim", opts = {} },
   },
   config = function()
-    -- Check if we're on nvim 0.11+ and use new config format
-    local use_new_config = vim.fn.has('nvim-0.11') == 1
+    -- Aggressively suppress ALL lspconfig warnings
+    local old_notify = vim.notify
+    local old_warn = vim.api.nvim_echo
+    local old_print = print
     
-    -- import lspconfig plugin
+    -- Override all notification methods
+    vim.notify = function(msg, level, opts)
+      if type(msg) == "string" then
+        local lower_msg = msg:lower()
+        if lower_msg:match("lspconfig") or 
+           lower_msg:match("deprecated") or
+           lower_msg:match("framework") or
+           lower_msg:match("vim%.lsp%.config") or
+           lower_msg:match("feature will be removed") or
+           lower_msg:match("nvim%-lspconfig") then
+          return -- Completely ignore
+        end
+      end
+      old_notify(msg, level, opts)
+    end
+    
+    -- Override vim.api.nvim_echo to catch warnings
+    vim.api.nvim_echo = function(chunks, history, opts)
+      for _, chunk in ipairs(chunks or {}) do
+        if type(chunk) == "table" and chunk[1] then
+          local text = tostring(chunk[1]):lower()
+          if text:match("lspconfig") or text:match("deprecated") or text:match("framework") then
+            return -- Ignore warning echoes
+          end
+        end
+      end
+      old_warn(chunks, history, opts)
+    end
+    
+    -- Override print as last resort
+    print = function(...)
+      local args = {...}
+      for _, arg in ipairs(args) do
+        if type(arg) == "string" and (arg:match("lspconfig") or arg:match("deprecated")) then
+          return -- Ignore printed warnings
+        end
+      end
+      old_print(...)
+    end
+
+    -- Import required modules
     local lspconfig = require("lspconfig")
-
-    -- import mason_lspconfig plugin
-    local mason_lspconfig = require("mason-lspconfig")
-
-    -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
-    local keymap = vim.keymap -- for conciseness
+    -- Restore all notification methods
+    vim.notify = old_notify
+    vim.api.nvim_echo = old_warn
+    print = old_print
 
+    local keymap = vim.keymap
+
+    -- LSP attach autocmd for keymaps
     vim.api.nvim_create_autocmd("LspAttach", {
       group = vim.api.nvim_create_augroup("UserLspConfig", {}),
       callback = function(ev)
-        -- Buffer local mappings.
-        -- See `:help vim.lsp.*` for documentation on any of the below functions
         local opts = { buffer = ev.buf, silent = true }
 
-        -- set keybinds
-        opts.desc = "Show LSP references"
-        keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", opts) -- show definition, references
-
-        opts.desc = "Go to declaration"
-        keymap.set("n", "gD", vim.lsp.buf.declaration, opts) -- go to declaration
-
-        opts.desc = "Show LSP definitions"
-        keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", opts) -- show lsp definitions
-
-        opts.desc = "Show LSP implementations"
-        keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", opts) -- show lsp implementations
-
-        opts.desc = "Show LSP type definitions"
-        keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", opts) -- show lsp type definitions
-
-        opts.desc = "See available code actions"
-        keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, opts) -- see available code actions, in visual mode will apply to selection
-
-        opts.desc = "Smart rename"
-        keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts) -- smart rename
-
-        opts.desc = "Show buffer diagnostics"
-        keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", opts) -- show  diagnostics for file
-
-        opts.desc = "Show line diagnostics"
-        keymap.set("n", "<leader>d", vim.diagnostic.open_float, opts) -- show diagnostics for line
-
-        opts.desc = "Go to previous diagnostic"
-        keymap.set("n", "[d", vim.diagnostic.goto_prev, opts) -- jump to previous diagnostic in buffer
-
-        opts.desc = "Go to next diagnostic"
-        keymap.set("n", "]d", vim.diagnostic.goto_next, opts) -- jump to next diagnostic in buffer
-
-        opts.desc = "Show documentation for what is under cursor"
-        keymap.set("n", "K", vim.lsp.buf.hover, opts) -- show documentation for what is under cursor
-
-        opts.desc = "Restart LSP"
-        keymap.set("n", "<leader>rs", ":LspRestart<CR>", opts) -- mapping to restart lsp if necessary
+        -- LSP keybindings
+        keymap.set("n", "gR", "<cmd>Telescope lsp_references<CR>", vim.tbl_extend("force", opts, { desc = "Show LSP references" }))
+        keymap.set("n", "gD", vim.lsp.buf.declaration, vim.tbl_extend("force", opts, { desc = "Go to declaration" }))
+        keymap.set("n", "gd", "<cmd>Telescope lsp_definitions<CR>", vim.tbl_extend("force", opts, { desc = "Show LSP definitions" }))
+        keymap.set("n", "gi", "<cmd>Telescope lsp_implementations<CR>", vim.tbl_extend("force", opts, { desc = "Show LSP implementations" }))
+        keymap.set("n", "gt", "<cmd>Telescope lsp_type_definitions<CR>", vim.tbl_extend("force", opts, { desc = "Show LSP type definitions" }))
+        keymap.set({ "n", "v" }, "<leader>ca", vim.lsp.buf.code_action, vim.tbl_extend("force", opts, { desc = "See available code actions" }))
+        keymap.set("n", "<leader>rn", vim.lsp.buf.rename, vim.tbl_extend("force", opts, { desc = "Smart rename" }))
+        keymap.set("n", "<leader>D", "<cmd>Telescope diagnostics bufnr=0<CR>", vim.tbl_extend("force", opts, { desc = "Show buffer diagnostics" }))
+        keymap.set("n", "<leader>d", vim.diagnostic.open_float, vim.tbl_extend("force", opts, { desc = "Show line diagnostics" }))
+        keymap.set("n", "[d", vim.diagnostic.goto_prev, vim.tbl_extend("force", opts, { desc = "Go to previous diagnostic" }))
+        keymap.set("n", "]d", vim.diagnostic.goto_next, vim.tbl_extend("force", opts, { desc = "Go to next diagnostic" }))
+        keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Show documentation for what is under cursor" }))
+        keymap.set("n", "<leader>rs", ":LspRestart<CR>", vim.tbl_extend("force", opts, { desc = "Restart LSP" }))
       end,
     })
 
+    -- Configure diagnostics
     vim.diagnostic.config({
       signs = {
-        active = true, -- this is the default
         text = {
-          [vim.diagnostic.severity.ERROR] = "",
-          [vim.diagnostic.severity.WARN] = "",
-          [vim.diagnostic.severity.INFO] = "",
+          [vim.diagnostic.severity.ERROR] = "",
+          [vim.diagnostic.severity.WARN] = "",
+          [vim.diagnostic.severity.INFO] = "",
           [vim.diagnostic.severity.HINT] = "󰠠",
         },
       },
+      virtual_text = {
+        prefix = "●",
+      },
+      update_in_insert = false,
+      underline = true,
+      severity_sort = true,
+      float = {
+        focusable = false,
+        style = "minimal",
+        border = "rounded",
+        source = "always",
+        header = "",
+        prefix = "",
+      },
     })
 
-    -- used to enable autocompletion (assign to every lsp server config)
+    -- Get capabilities for autocompletion
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
-    -- NEW APPROACH: Manually loop over servers and configure them.
-    -- This bypasses the failing `setup_handlers` function.
+    -- Server configurations
     local servers = {
-      "lua_ls",
-      "clangd",
-      "bashls",
-      "dockerls",
-      "cmake",
+      lua_ls = {
+        settings = {
+          Lua = {
+            runtime = { version = "LuaJIT" },
+            diagnostics = { globals = { "vim" } },
+            workspace = {
+              checkThirdParty = false,
+              library = { vim.env.VIMRUNTIME },
+            },
+            completion = { callSnippet = "Replace" },
+            telemetry = { enable = false },
+          },
+        },
+      },
+      clangd = {},
+      bashls = {},
+      dockerls = {},
+      cmake = {},
     }
 
-    for _, server_name in ipairs(servers) do
-      local opts = {
+    -- Setup each server
+    for server_name, config in pairs(servers) do
+      local server_config = vim.tbl_deep_extend("force", {
         capabilities = capabilities,
-      }
+      }, config)
 
-      -- Special settings for lua_ls
-      if server_name == "lua_ls" then
-        opts.settings = {
-          Lua = {
-            diagnostics = {
-              globals = { "vim" },
-            },
-            completion = {
-              callSnippet = "Replace",
-            },
-          },
-        }
-      end
-
-      lspconfig[server_name].setup(opts)
+      lspconfig[server_name].setup(server_config)
     end
   end,
 }
-
-

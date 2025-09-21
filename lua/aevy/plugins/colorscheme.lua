@@ -1,187 +1,126 @@
 return {
-  -- Aco theme (dark terminal theme)
+  -- TokyoNight theme
   {
-    "Mofiqul/vscode.nvim",
-    name = "aco",
+    "folke/tokyonight.nvim",
+    priority = 1000,
     config = function()
-      require('vscode').setup({
-        style = "dark",
-        transparent = false,
-        italic_comments = true,
-        disable_nvimtree_bg = false,
-        color_overrides = {
-          vscBack = '#0f0f23',
-          vscFront = '#d4d4d4',
-          vscTabCurrent = '#1e1e3f',
-          vscTabOther = '#0f0f23',
-          vscTabOutside = '#0f0f23',
-        },
+      local bg = "#011628"
+      local bg_dark = "#011423"
+      local bg_highlight = "#143652"
+      local bg_search = "#0A64AC"
+      local bg_visual = "#275378"
+      local fg = "#CBE0F0"
+      local fg_dark = "#B4D0E9"
+      local fg_gutter = "#627E97"
+      local border = "#547998"
+
+      require("tokyonight").setup({
+        style = "night",
+        on_colors = function(colors)
+          colors.bg = bg
+          colors.bg_dark = bg_dark
+          colors.bg_float = bg_dark
+          colors.bg_highlight = bg_highlight
+          colors.bg_popup = bg_dark
+          colors.bg_search = bg_search
+          colors.bg_sidebar = bg_dark
+          colors.bg_statusline = bg_dark
+          colors.bg_visual = bg_visual
+          colors.border = border
+          colors.fg = fg
+          colors.fg_dark = fg_dark
+          colors.fg_float = fg
+          colors.fg_gutter = fg_gutter
+          colors.fg_sidebar = fg_dark
+        end,
       })
     end,
   },
 
-  -- Birds of Paradise theme
+  -- Catppuccin theme
   {
-    "mhartington/oceanic-next",
-    name = "birds-of-paradise",
+    "catppuccin/nvim",
+    name = "catppuccin",
     config = function()
-      vim.g.oceanic_next_terminal_bold = 1
-      vim.g.oceanic_next_terminal_italic = 1
-    end,
-  },
-
-  -- Belafonte theme (inspired by terminal theme)
-  {
-    "bluz71/vim-nightfly-colors",
-    name = "belafonte",
-    config = function()
-      vim.g.nightflyTransparent = false
-      vim.g.nightflyVirtualTextColor = true
-      vim.g.nightflyUndercurls = true
-    end,
-  },
-
-  -- Dracula theme (classic terminal theme)
-  {
-    "Mofiqul/dracula.nvim",
-    config = function()
-      require("dracula").setup({
-        colors = {
-          bg = "#1e1f29",
-          fg = "#f8f8f2",
-          selection = "#44475a",
-          comment = "#6272a4",
-          red = "#ff5555",
-          orange = "#ffb86c",
-          yellow = "#f1fa8c",
-          green = "#50fa7b",
-          purple = "#bd93f9",
-          cyan = "#8be9fd",
-          pink = "#ff79c6",
-          bright_red = "#ff6e6e",
-          bright_green = "#69ff94",
-          bright_yellow = "#ffffa5",
-          bright_blue = "#d6acff",
-          bright_magenta = "#ff92df",
-          bright_cyan = "#a4ffff",
-          bright_white = "#ffffff",
-          menu = "#21222c",
-          visual = "#3e4452",
-          gutter_fg = "#4b5263",
-          nontext = "#3b4048",
-        },
-        show_end_of_buffer = false,
-        transparent_bg = false,
-        lualine_bg_color = "#44475a",
-        italic_comment = true,
-      })
-    end,
-  },
-
-  -- Monokai Pro (terminal inspired)
-  {
-    "loctvl842/monokai-pro.nvim",
-    config = function()
-      require("monokai-pro").setup({
+      require("catppuccin").setup({
+        flavour = "macchiato", -- latte, frappe, macchiato, mocha
         transparent_background = false,
-        terminal_colors = true,
-        devicons = true,
-        filter = "pro", -- classic | octagon | pro | machine | ristretto | spectrum
-        inc_search = "background",
-        background_clear = {},
-        plugins = {
-          bufferline = {
-            underline_selected = false,
-            underline_visible = false,
-          },
-          indent_blankline = {
-            context_highlight = "default",
-            context_start_underline = false,
-          },
-        },
       })
     end,
   },
 
-  -- Terminal-inspired Gruvbox Material (keeping as it's popular)
+  -- Gruvbox theme
+  {
+    "ellisonleao/gruvbox.nvim",
+    config = function()
+      require("gruvbox").setup({
+        contrast = "hard", -- can be "hard", "soft" or empty string
+        transparent_mode = false,
+      })
+    end,
+  },
+
+  -- Gruvbox Material theme
   {
     "sainnhe/gruvbox-material",
     config = function()
-      vim.g.gruvbox_material_background = 'hard' -- hard for terminal feel
-      vim.g.gruvbox_material_foreground = 'material'
+      vim.g.gruvbox_material_background = 'medium' -- 'hard', 'medium', 'soft'
+      vim.g.gruvbox_material_foreground = 'material' -- 'material', 'mix', 'original'
       vim.g.gruvbox_material_transparent_background = 0
       vim.g.gruvbox_material_enable_italic = 1
       vim.g.gruvbox_material_enable_bold = 1
-      vim.g.gruvbox_material_ui_contrast = 'high'
     end,
   },
 
-  -- Tokyo Night Storm (terminal-style)
+  -- Nord theme
   {
-    "folke/tokyonight.nvim",
+    "shaunsingh/nord.nvim",
     config = function()
-      require("tokyonight").setup({
-        style = "storm", -- storm has better terminal feel
-        terminal_colors = true,
-        styles = {
-          comments = { italic = true },
-          keywords = { italic = true },
-          functions = {},
-          variables = {},
-          sidebars = "dark",
-          floats = "dark",
-        },
-        sidebars = { "qf", "help", "terminal" },
-        day_brightness = 0.3,
-        hide_inactive_statusline = false,
-        dim_inactive = false,
-        lualine_bold = false,
+      vim.g.nord_contrast = true
+      vim.g.nord_borders = false
+      vim.g.nord_disable_background = false
+    end,
+  },
+
+  -- Kanagawa theme
+  {
+    "rebelot/kanagawa.nvim",
+    config = function()
+      require("kanagawa").setup({
+        compile = false,
+        undercurl = true,
+        commentStyle = { italic = true },
+        functionStyle = {},
+        keywordStyle = { italic = true },
+        statementStyle = { bold = true },
+        typeStyle = {},
+        transparent = false,
+        theme = "wave", -- Load "wave" theme when 'background' option is not set
       })
     end,
   },
 
-  -- Cyberdream (futuristic terminal theme)
+  -- Rose Pine theme
   {
-    "scottmckendry/cyberdream.nvim",
+    "rose-pine/neovim",
+    name = "rose-pine",
     config = function()
-      require("cyberdream").setup({
-        transparent = false,
-        italic_comments = true,
-        hide_fillchars = false,
-        borderless_telescope = true,
-        terminal_colors = true,
+      require("rose-pine").setup({
+        variant = "moon", -- auto, main, moon, or dawn
+        dark_variant = "moon",
+        disable_background = false,
+        disable_float_background = false,
       })
     end,
   },
 
-  -- Onedark (Atom-inspired terminal theme)
+  -- Nightfox theme
   {
-    "navarasu/onedark.nvim",
+    "EdenEast/nightfox.nvim",
     config = function()
-      require('onedark').setup({
-        style = 'dark', -- dark, darker, cool, deep, warm, warmer
-        transparent = false,
-        term_colors = true,
-        ending_tildes = false,
-        cmp_itemkind_reverse = false,
-        toggle_style_key = nil,
-        toggle_style_list = {'dark', 'darker', 'cool', 'deep', 'warm', 'warmer'},
-        code_style = {
-          comments = 'italic',
-          keywords = 'none',
-          functions = 'none',
-          strings = 'none',
-          variables = 'none'
-        },
-        lualine = {
+      require("nightfox").setup({
+        options = {
           transparent = false,
-        },
-        colors = {},
-        highlights = {},
-        diagnostics = {
-          darker = true,
-          undercurl = true,
-          background = true,
         },
       })
     end,
@@ -189,7 +128,7 @@ return {
 
   -- Set default colorscheme with persistence
   {
-    "sainnhe/gruvbox-material",
+    "folke/tokyonight.nvim",
     priority = 1001, -- Higher priority to ensure it loads last
     config = function()
       -- Function to save colorscheme preference
@@ -213,7 +152,7 @@ return {
           file:close()
           return saved_colorscheme
         end
-        return "gruvbox-material" -- default fallback to terminal-style theme
+        return "tokyonight" -- default fallback
       end
 
       -- Create autocommand to save colorscheme when it changes
