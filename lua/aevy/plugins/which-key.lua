@@ -3,16 +3,17 @@ return {
   event = "VeryLazy",
   init = function()
     vim.o.timeout = true
-    vim.o.timeoutlen = 200 -- Reduce delay for faster response
+    vim.o.timeoutlen = 300 -- Wait 300ms before showing which-key popup
   end,
   opts = {
     preset = "classic",
-    delay = 0, -- No delay for leader keys
+    delay = 500, -- Additional delay before showing which-key popup (500ms)
     spec = {
       { "<leader>f", group = "file/find" },
       { "<leader>s", group = "split" },
       { "<leader>t", group = "tab/terminal" },
       { "<leader>m", group = "harpoon/mark" },
+      { "<leader>w", group = "window" },
     },
   },
 }

@@ -48,11 +48,11 @@ return {
       keymap.set('n', '<A-k>', require('smart-splits').resize_up, { desc = 'Resize window up' })
       keymap.set('n', '<A-l>', require('smart-splits').resize_right, { desc = 'Resize window right' })
       
-      -- Window swapping
-      keymap.set('n', '<leader><leader>h', require('smart-splits').swap_buf_left, { desc = 'Swap buffer left' })
-      keymap.set('n', '<leader><leader>j', require('smart-splits').swap_buf_down, { desc = 'Swap buffer down' })
-      keymap.set('n', '<leader><leader>k', require('smart-splits').swap_buf_up, { desc = 'Swap buffer up' })
-      keymap.set('n', '<leader><leader>l', require('smart-splits').swap_buf_right, { desc = 'Swap buffer right' })
+      -- Window swapping - removed <leader><leader> keymaps to avoid conflict with file finder
+      keymap.set('n', '<leader>wh', require('smart-splits').swap_buf_left, { desc = 'Swap buffer left' })
+      keymap.set('n', '<leader>wj', require('smart-splits').swap_buf_down, { desc = 'Swap buffer down' })
+      keymap.set('n', '<leader>wk', require('smart-splits').swap_buf_up, { desc = 'Swap buffer up' })
+      keymap.set('n', '<leader>wl', require('smart-splits').swap_buf_right, { desc = 'Swap buffer right' })
     end,
   },
 

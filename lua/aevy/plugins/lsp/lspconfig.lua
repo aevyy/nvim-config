@@ -9,6 +9,12 @@ return {
     { "folke/neodev.nvim", opts = {} },
   },
   config = function()
+    -- Completely prevent stylua from being treated as LSP
+    vim.g.stylua_lsp_enabled = false
+    if vim.lsp.config then
+      vim.lsp.config.stylua = nil
+    end
+    
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
 

@@ -202,7 +202,7 @@ return {
           if file then
             file:write(colorscheme)
             file:close()
-            print("Theme saved: " .. colorscheme)
+            -- Removed print message for silent operation
           end
         end
       end
