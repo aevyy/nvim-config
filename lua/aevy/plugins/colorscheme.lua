@@ -187,57 +187,100 @@ return {
     end,
   },
 
-  -- Set default colorscheme with persistence
+  -- Theme persistence system (highest priority)
   {
-    "sainnhe/gruvbox-material",
-    priority = 1001, -- Higher priority to ensure it loads last
+    "folke/tokyonight.nvim", -- Use any theme as dependency
+    priority = 9999, -- Highest priority to load after all other themes
     config = function()
+      local config_dir = vim.fn.stdpath("config")
+      local colorscheme_file = config_dir .. "/colorscheme.txt"
+      
       -- Function to save colorscheme preference
       local function save_colorscheme(colorscheme)
-        local config_dir = vim.fn.stdpath("config")
-        local colorscheme_file = config_dir .. "/colorscheme.txt"
-        local file = io.open(colorscheme_file, "w")
-        if file then
-          file:write(colorscheme)
-          file:close()
+        if colorscheme and colorscheme ~= "" then
+          local file = io.open(colorscheme_file, "w")
+          if file then
+            file:write(colorscheme)
+            file:close()
+            print("Theme saved: " .. colorscheme)
+          end
         end
       end
 
       -- Function to load saved colorscheme
       local function load_saved_colorscheme()
-        local config_dir = vim.fn.stdpath("config")
-        local colorscheme_file = config_dir .. "/colorscheme.txt"
         local file = io.open(colorscheme_file, "r")
         if file then
           local saved_colorscheme = file:read("*line")
           file:close()
-          return saved_colorscheme
+          if saved_colorscheme then
+            return saved_colorscheme:gsub("%s+", "")
+          end
         end
-        return "gruvbox-material" -- default fallback to terminal-style theme
+        return nil
+      end
+
+      -- Set up global function for manual saving
+      _G.save_current_colorscheme = function()
+        if vim.g.colors_name then
+          save_colorscheme(vim.g.colors_name)
+        end
       end
 
       -- Create autocommand to save colorscheme when it changes
       vim.api.nvim_create_autocmd("ColorScheme", {
+        group = vim.api.nvim_create_augroup("ColorschemeAutoSave", { clear = true }),
         pattern = "*",
         callback = function()
-          save_colorscheme(vim.g.colors_name)
+          -- Small delay to ensure colorscheme is fully loaded
+          vim.defer_fn(function()
+            if vim.g.colors_name then
+              save_colorscheme(vim.g.colors_name)
+            end
+          end, 50)
         end,
       })
 
-      -- Load the saved colorscheme or default with better timing
+      -- Load saved colorscheme on startup
       local saved_colorscheme = load_saved_colorscheme()
+      if saved_colorscheme and saved_colorscheme ~= "" then
+        -- Use defer_fn to ensure this runs after all other theme setups
+        vim.defer_fn(function()
+          pcall(vim.cmd, "colorscheme " .. saved_colorscheme)
+        end, 100)
+      end
+
+      -- Add keymap for manual saving
+      vim.keymap.set("n", "<leader>cs", ":lua save_current_colorscheme()<CR>", 
+        { desc = "Save current colorscheme as default" })
+    end,
+  },
+
+  -- Default colorscheme setup (lower priority)
+  {
+    "sainnhe/gruvbox-material",
+    priority = 1000, -- Lower priority than persistence system
+    config = function()
+      -- Configure gruvbox-material but don't auto-load if we have a saved theme
+      vim.g.gruvbox_material_background = 'hard'
+      vim.g.gruvbox_material_foreground = 'material'
+      vim.g.gruvbox_material_transparent_background = 0
+      vim.g.gruvbox_material_enable_italic = 1
+      vim.g.gruvbox_material_enable_bold = 1
+      vim.g.gruvbox_material_ui_contrast = 'high'
       
-      -- Use VimEnter with higher priority to ensure it loads after all themes are set up
-      vim.api.nvim_create_autocmd("VimEnter", {
-        callback = function()
-          -- Additional delay to ensure all plugins are loaded
-          vim.defer_fn(function()
-            if vim.g.colors_name ~= saved_colorscheme then
-              pcall(vim.cmd, "colorscheme " .. saved_colorscheme)
-            end
-          end, 100)
-        end,
-      })
+      -- Only set as default if no saved theme exists
+      local config_dir = vim.fn.stdpath("config")
+      local colorscheme_file = config_dir .. "/colorscheme.txt"
+      local file = io.open(colorscheme_file, "r")
+      if not file then
+        -- No saved theme, use gruvbox-material as default
+        vim.defer_fn(function()
+          pcall(vim.cmd, "colorscheme gruvbox-material")
+        end, 50)
+      else
+        file:close()
+      end
     end,
   },
 }

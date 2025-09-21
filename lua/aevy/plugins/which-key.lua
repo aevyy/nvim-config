@@ -6,8 +6,13 @@ return {
     vim.o.timeoutlen = 200 -- Reduce delay for faster response
   end,
   opts = {
-    -- your configuration comes here
-    -- or leave it empty to use the default settings
-    -- refer to the configuration section below
+    preset = "classic",
+    delay = 0, -- No delay for leader keys
+    spec = {
+      { "<leader>f", group = "file/find" },
+      { "<leader>s", group = "split" },
+      { "<leader>t", group = "tab/terminal" },
+      { "<leader>m", group = "harpoon/mark" },
+    },
   },
 }

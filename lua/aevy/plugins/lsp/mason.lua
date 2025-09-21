@@ -32,8 +32,10 @@ return {
         "dockerls",
         "cmake",
         "bashls",
-        "pyright",
       },
+      -- Don't auto-setup servers, we'll do it manually
+      automatic_installation = true,
+      automatic_setup = false,
     })
 
     mason_tool_installer.setup({
