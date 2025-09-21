@@ -9,6 +9,9 @@ return {
     { "folke/neodev.nvim", opts = {} },
   },
   config = function()
+    -- Check if we're on nvim 0.11+ and use new config format
+    local use_new_config = vim.fn.has('nvim-0.11') == 1
+    
     -- import lspconfig plugin
     local lspconfig = require("lspconfig")
 

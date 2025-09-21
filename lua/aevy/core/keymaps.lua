@@ -1,5 +1,8 @@
 vim.g.mapleader = " "
 
+-- Disable space in normal mode to prevent leader key issues
+vim.keymap.set("n", " ", "<Nop>", { silent = true })
+
 local keymap = vim.keymap -- for conciseness
 
 keymap.set("i", "jk", "<ESC>", {desc = "Exit insert mode with jk"})
@@ -56,6 +59,6 @@ keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase w
 -- tab management
 keymap.set("n", "<leader>to", "<cmd>tabnew<CR>", { desc = "Open new tab" })
 keymap.set("n", "<leader>tx", "<cmd>tabclose<CR>", { desc = "Close current tab" })
-keymap.set("n", "<leader>tn", "<cmd>tabn<CR>", { desc = "Go to next tab" })
-keymap.set("n", "<leader>tp", "<cmd>tabp<CR>", { desc = "Go to previous tab" })
-keymap.set("n", "<leader>tf", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" })
+keymap.set("n", "<leader>tN", "<cmd>tabn<CR>", { desc = "Go to next tab" })
+keymap.set("n", "<leader>tP", "<cmd>tabp<CR>", { desc = "Go to previous tab" })
+keymap.set("n", "<leader>tF", "<cmd>tabnew %<CR>", { desc = "Open current buffer in new tab" })
