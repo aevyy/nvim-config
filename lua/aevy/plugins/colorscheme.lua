@@ -12,9 +12,8 @@ return {
         color_overrides = {
           vscBack = '#0f0f23',
           vscFront = '#d4d4d4',
-          vscTabCurrent = '#1e1e3f',
-          vscTabOther = '#0f0f23',
-          vscTabOutside = '#0f0f23',
+          },
+        bufferline = {
         },
       })
     end,

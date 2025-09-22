@@ -11,8 +11,7 @@ return {
     spec = {
       { "<leader>f", group = "file/find" },
       { "<leader>s", group = "split" },
-      { "<leader>t", group = "tab/terminal" },
-      { "<leader>m", group = "harpoon/mark" },
+      { "<leader>h", group = "harpoon" },
       { "<leader>w", group = "window" },
     },
   },

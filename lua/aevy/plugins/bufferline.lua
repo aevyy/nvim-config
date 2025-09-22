@@ -6,6 +6,8 @@ return {
     options = {
       mode = "tabs",
       separator_style = "slant",
+      show_tab_indicators = false,
+      show_tabs = false,
     },
   },
 }
