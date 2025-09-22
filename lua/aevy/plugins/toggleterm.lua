@@ -43,10 +43,20 @@ return {
       vim.keymap.set('t', '<C-k>', [[<Cmd>wincmd k<CR>]], opts)
       vim.keymap.set('t', '<C-l>', [[<Cmd>wincmd l<CR>]], opts)
       vim.keymap.set('t', '<C-w>', [[<C-\><C-n><C-w>]], opts)
+      -- Add q to close floating terminals in normal mode
+      vim.keymap.set('n', 'q', [[<cmd>close<cr>]], opts)
     end
 
-    -- if you only want these mappings for toggle term use term://*toggleterm#* instead
-    vim.cmd('autocmd! TermOpen term://* lua set_terminal_keymaps()')
+    -- Apply keymaps to all terminals except lazygit (which has its own)
+    vim.api.nvim_create_autocmd("TermOpen", {
+      pattern = "term://*",
+      callback = function()
+        local bufname = vim.fn.bufname()
+        if not bufname:match("lazygit") then
+          set_terminal_keymaps()
+        end
+      end,
+    })
 
     local Terminal = require('toggleterm.terminal').Terminal
 
@@ -61,7 +71,15 @@ return {
       -- function to run on opening the terminal
       on_open = function(term)
         vim.cmd("startinsert!")
-        vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", {noremap = true, silent = true})
+        -- Set buffer-specific keymaps for lazygit (no jk mapping to avoid delays)
+        local opts = { buffer = term.bufnr }
+        vim.keymap.set("n", "q", "<cmd>close<CR>", opts)
+        vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], opts)
+        -- No jk mapping for lazygit to avoid navigation delays
+        vim.keymap.set("t", "<C-h>", [[<Cmd>wincmd h<CR>]], opts)
+        vim.keymap.set("t", "<C-j>", [[<Cmd>wincmd j<CR>]], opts)
+        vim.keymap.set("t", "<C-k>", [[<Cmd>wincmd k<CR>]], opts)
+        vim.keymap.set("t", "<C-l>", [[<Cmd>wincmd l<CR>]], opts)
       end,
       -- function to run on closing the terminal
       on_close = function(term)
@@ -115,8 +133,9 @@ return {
     keymap.set("n", "<leader>th", "<cmd>ToggleTerm size=10 direction=horizontal<cr>", { desc = "Toggle horizontal terminal" })
     keymap.set("n", "<leader>tv", "<cmd>ToggleTerm size=80 direction=vertical<cr>", { desc = "Toggle vertical terminal" })
     keymap.set("n", "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<CR>", { desc = "Toggle Lazygit" })
-    keymap.set("n", "<leader>tn", "<cmd>lua _NODE_TOGGLE()<CR>", { desc = "Toggle Node.js REPL" })
-    keymap.set("n", "<leader>tp", "<cmd>lua _PYTHON_TOGGLE()<CR>", { desc = "Toggle Python REPL" })
+    -- Removed <leader>tn and <leader>tp to avoid conflicts with tab navigation
+    -- keymap.set("n", "<leader>tn", "<cmd>lua _NODE_TOGGLE()<CR>", { desc = "Toggle Node.js REPL" })
+    -- keymap.set("n", "<leader>tp", "<cmd>lua _PYTHON_TOGGLE()<CR>", { desc = "Toggle Python REPL" })
     keymap.set("n", "<leader>tt", "<cmd>lua _HTOP_TOGGLE()<CR>", { desc = "Toggle htop" })
   end,
 }

@@ -9,15 +9,6 @@ return {
     { "folke/neodev.nvim", opts = {} },
   },
   config = function()
-    -- Check if we're on nvim 0.11+ and use new config format
-    local use_new_config = vim.fn.has('nvim-0.11') == 1
-    
-    -- import lspconfig plugin
-    local lspconfig = require("lspconfig")
-
-    -- import mason_lspconfig plugin
-    local mason_lspconfig = require("mason-lspconfig")
-
     -- import cmp-nvim-lsp plugin
     local cmp_nvim_lsp = require("cmp_nvim_lsp")
 
@@ -76,9 +67,9 @@ return {
       signs = {
         active = true, -- this is the default
         text = {
-          [vim.diagnostic.severity.ERROR] = "",
-          [vim.diagnostic.severity.WARN] = "",
-          [vim.diagnostic.severity.INFO] = "",
+          [vim.diagnostic.severity.ERROR] = "",
+          [vim.diagnostic.severity.WARN] = "",
+          [vim.diagnostic.severity.INFO] = "",
           [vim.diagnostic.severity.HINT] = "󰠠",
         },
       },
@@ -87,38 +78,52 @@ return {
     -- used to enable autocompletion (assign to every lsp server config)
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
-    -- NEW APPROACH: Manually loop over servers and configure them.
-    -- This bypasses the failing `setup_handlers` function.
-    local servers = {
-      "lua_ls",
-      "clangd",
-      "bashls",
-      "dockerls",
-      "cmake",
+    -- Use new vim.lsp.config for Neovim 0.11+
+    vim.lsp.config.lua_ls = {
+      cmd = { 'lua-language-server' },
+      settings = {
+        Lua = {
+          diagnostics = {
+            globals = { "vim" },
+          },
+          completion = {
+            callSnippet = "Replace",
+          },
+          workspace = {
+            library = vim.api.nvim_get_runtime_file("", true),
+          },
+        },
+      },
+      capabilities = capabilities,
     }
 
-    for _, server_name in ipairs(servers) do
-      local opts = {
-        capabilities = capabilities,
-      }
+    vim.lsp.config.clangd = {
+      cmd = { 'clangd' },
+      capabilities = capabilities,
+    }
 
-      -- Special settings for lua_ls
-      if server_name == "lua_ls" then
-        opts.settings = {
-          Lua = {
-            diagnostics = {
-              globals = { "vim" },
-            },
-            completion = {
-              callSnippet = "Replace",
-            },
-          },
-        }
-      end
+    vim.lsp.config.bashls = {
+      cmd = { 'bash-language-server', 'start' },
+      capabilities = capabilities,
+    }
 
-      lspconfig[server_name].setup(opts)
-    end
+    vim.lsp.config.dockerls = {
+      cmd = { 'docker-langserver', '--stdio' },
+      capabilities = capabilities,
+    }
+
+    vim.lsp.config.cmake = {
+      cmd = { 'cmake-language-server' },
+      capabilities = capabilities,
+    }
+
+    -- Enable the LSP servers
+    vim.lsp.enable({
+      'lua_ls',
+      'clangd', 
+      'bashls',
+      'dockerls',
+      'cmake',
+    })
   end,
 }
-
-

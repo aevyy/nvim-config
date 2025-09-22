@@ -86,7 +86,18 @@ return {
         sections = {
           lualine_a = { 'mode' },
           lualine_b = { 'branch', 'diff', 'diagnostics' },
-          lualine_c = { 'filename' },
+          lualine_c = { 
+            {
+              'filename',
+              on_click = function()
+                vim.cmd('tabnew %')
+              end,
+              color = function()
+                local colors = get_theme_colors()
+                return { fg = colors.blue, gui = 'bold,underline' }
+              end,
+            }
+          },
           lualine_x = {
             {
               lazy_status.updates,
