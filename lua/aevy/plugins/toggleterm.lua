@@ -4,7 +4,7 @@ return {
   config = function()
     require("toggleterm").setup({
       size = 20,
-      open_mapping = [[<c-\>]],
+      open_mapping = nil, -- Disable global open_mapping to avoid conflicts
       hide_numbers = true,
       shade_filetypes = {},
       shade_terminals = true,
@@ -129,13 +129,17 @@ return {
 
     -- Set keymaps
     local keymap = vim.keymap
+    
+    -- Add explicit Ctrl+\ mapping for floating terminal
+    keymap.set("n", "<C-\\>", "<cmd>ToggleTerm direction=float<cr>", { desc = "Toggle floating terminal" })
+    keymap.set("t", "<C-\\>", "<cmd>ToggleTerm direction=float<cr>", { desc = "Toggle floating terminal" })
+    
     keymap.set("n", "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", { desc = "Toggle floating terminal" })
     keymap.set("n", "<leader>th", "<cmd>ToggleTerm size=10 direction=horizontal<cr>", { desc = "Toggle horizontal terminal" })
     keymap.set("n", "<leader>tv", "<cmd>ToggleTerm size=80 direction=vertical<cr>", { desc = "Toggle vertical terminal" })
     keymap.set("n", "<leader>gg", "<cmd>lua _LAZYGIT_TOGGLE()<CR>", { desc = "Toggle Lazygit" })
-    -- Removed <leader>tn and <leader>tp to avoid conflicts with tab navigation
-    -- keymap.set("n", "<leader>tn", "<cmd>lua _NODE_TOGGLE()<CR>", { desc = "Toggle Node.js REPL" })
-    -- keymap.set("n", "<leader>tp", "<cmd>lua _PYTHON_TOGGLE()<CR>", { desc = "Toggle Python REPL" })
+    keymap.set("n", "<leader>tn", "<cmd>lua _NODE_TOGGLE()<CR>", { desc = "Toggle Node.js REPL" })
+    keymap.set("n", "<leader>tp", "<cmd>lua _PYTHON_TOGGLE()<CR>", { desc = "Toggle Python REPL" })
     keymap.set("n", "<leader>tt", "<cmd>lua _HTOP_TOGGLE()<CR>", { desc = "Toggle htop" })
   end,
 }
