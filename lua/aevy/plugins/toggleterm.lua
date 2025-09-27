@@ -130,9 +130,10 @@ return {
     -- Set keymaps
     local keymap = vim.keymap
     
-    -- Add explicit Ctrl+\ mapping for floating terminal
-    keymap.set("n", "<C-\\>", "<cmd>ToggleTerm direction=float<cr>", { desc = "Toggle floating terminal" })
-    keymap.set("t", "<C-\\>", "<cmd>ToggleTerm direction=float<cr>", { desc = "Toggle floating terminal" })
+    -- Create a global toggle function for floating terminal
+    _G.toggle_float_terminal = function()
+      vim.cmd("ToggleTerm direction=float")
+    end
     
     keymap.set("n", "<leader>tf", "<cmd>ToggleTerm direction=float<cr>", { desc = "Toggle floating terminal" })
     keymap.set("n", "<leader>th", "<cmd>ToggleTerm size=10 direction=horizontal<cr>", { desc = "Toggle horizontal terminal" })

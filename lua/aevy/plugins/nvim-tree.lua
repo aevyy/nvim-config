@@ -21,8 +21,8 @@ return {
         icons = {
           glyphs = {
             folder = {
-              arrow_closed = "", -- arrow when folder is closed
-              arrow_open = "", -- arrow when folder is open
+              arrow_closed = "", -- arrow when folder is closed
+              arrow_open = "", -- arrow when folder is open
             },
           },
         },
@@ -42,6 +42,14 @@ return {
       },
       git = {
         ignore = false,
+      },
+      -- Disable default keymaps to prevent conflicts
+      disable_netrw = true,
+      hijack_netrw = true,
+      hijack_cursor = false,
+      update_focused_file = {
+        enable = true,
+        update_root = false,
       },
     })
 

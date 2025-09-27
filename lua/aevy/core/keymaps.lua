@@ -61,3 +61,24 @@ keymap.set("n", "<C-Up>", "<cmd>resize +2<CR>", { desc = "Increase window height
 keymap.set("n", "<C-Down>", "<cmd>resize -2<CR>", { desc = "Decrease window height" })
 keymap.set("n", "<C-Left>", "<cmd>vertical resize -2<CR>", { desc = "Decrease window width" })
 keymap.set("n", "<C-Right>", "<cmd>vertical resize +2<CR>", { desc = "Increase window width" })
+
+-- Terminal toggle with Ctrl+\ (high priority mapping with autocmd to ensure it's set)
+local function setup_terminal_toggle()
+  local function toggle_float_term()
+    vim.cmd("ToggleTerm direction=float")
+  end
+
+  vim.keymap.set("n", "<C-\\>", toggle_float_term, { desc = "Toggle floating terminal", noremap = true, silent = true })
+  vim.keymap.set("t", "<C-\\>", toggle_float_term, { desc = "Toggle floating terminal", noremap = true, silent = true })
+  vim.keymap.set("i", "<C-\\>", toggle_float_term, { desc = "Toggle floating terminal", noremap = true, silent = true })
+end
+
+-- Set the keybinding immediately
+setup_terminal_toggle()
+
+-- Also set it after all plugins are loaded to ensure no conflicts
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.defer_fn(setup_terminal_toggle, 100)
+  end,
+})
