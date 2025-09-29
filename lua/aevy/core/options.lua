@@ -22,7 +22,7 @@ opt.wrap = false
 opt.ignorecase = true -- ignore case when searvhing
 opt.smartcase = true -- if I include mixed case in my search, assumems yI want case-sensetive
 
-opt.cursorline = true
+opt.cursorline = false -- disable cursor line highlighting, show only cursor
 
 -- turn on termguicolorss for tokyonight colorscheme to work
 -- (have to use iterm2 or any other true color terminal)
@@ -39,9 +39,6 @@ opt.clipboard:append("unnamedplus") -- use system clipboard as default register
 -- split windows
 opt.splitright = true -- split vertical windot to the right
 opt.splitbelow = true -- split horizontal window to the bottom
-
--- tab/buffer behavior
-opt.switchbuf = "usetab" -- use existing tab if buffer is already open, stay in current tab otherwise
 
 -- scrolling
 opt.scrolloff = 8 -- keep 8 lines above/below cursor when scrolling

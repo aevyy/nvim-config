@@ -12,12 +12,16 @@ return {
       view = {
         width = 35,
         relativenumber = true,
+        cursorline = false, -- disable cursor line highlighting in file tree
       },
       -- change folder arrow icons
       renderer = {
         indent_markers = {
           enable = true,
         },
+        highlight_git = true,
+        highlight_opened_files = "name", -- highlight opened files by name only
+        highlight_modified = "name", -- highlight modified files by name only
         icons = {
           glyphs = {
             folder = {
@@ -60,5 +64,13 @@ return {
     keymap.set("n", "<leader>ef", "<cmd>NvimTreeFindFileToggle<CR>", { desc = "Toggle file explorer on current file" }) -- toggle file explorer on current file
     keymap.set("n", "<leader>ec", "<cmd>NvimTreeCollapse<CR>", { desc = "Collapse file explorer" }) -- collapse file explorer
     keymap.set("n", "<leader>er", "<cmd>NvimTreeRefresh<CR>", { desc = "Refresh file explorer" }) -- refresh file explorer
+
+    -- Disable cursor line in nvim-tree windows
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "NvimTree",
+      callback = function()
+        vim.opt_local.cursorline = false
+      end,
+    })
   end
 }
