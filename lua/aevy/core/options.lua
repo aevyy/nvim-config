@@ -16,7 +16,9 @@ opt.cindent = true -- C-style indentation for better code formatting
 -- comment formatting
 opt.formatoptions:remove({ "c", "r", "o" }) -- disable automatic comment continuation
 
-opt.wrap = false
+opt.wrap = true -- enable line wrapping
+opt.breakindent = true -- visually indent wrapped lines
+opt.showbreak = '↪ ' -- marker for wrapped lines
 
 -- search settings
 opt.ignorecase = true -- ignore case when searvhing
@@ -42,4 +44,15 @@ opt.splitbelow = true -- split horizontal window to the bottom
 
 -- scrolling
 opt.scrolloff = 8 -- keep 8 lines above/below cursor when scrolling
-opt.sidescrolloff = 8 -- keep 8 columns left/right of cursor when scrolling
+opt.sidescrolloff = 0 -- disable horizontal scroll offset
+
+-- Prevent auto-indenting when typing ':' in C/C++ (e.g. typing 'std::')
+vim.api.nvim_create_autocmd("FileType", {
+	pattern = { "c", "cpp", "objc", "h", "hpp" },
+	callback = function()
+		-- Remove ':' from cinkeys to stop automatic reindent on '::'
+		local cinkeys = vim.bo.cinkeys or ""
+		cinkeys = cinkeys:gsub(":", "")
+		vim.bo.cinkeys = cinkeys
+	end,
+})
