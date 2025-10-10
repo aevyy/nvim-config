@@ -78,52 +78,78 @@ return {
     -- used to enable autocompletion (assign to every lsp server config)
     local capabilities = cmp_nvim_lsp.default_capabilities()
 
-    -- Use new vim.lsp.config for Neovim 0.11+
+    -- Use vim.lsp.config for Neovim 0.11+ (no more lspconfig require)
+    -- This is the new native API that replaces lspconfig
+    
+    -- Lua language server
     vim.lsp.config.lua_ls = {
       cmd = { 'lua-language-server' },
+      filetypes = { 'lua' },
+      root_markers = { '.luarc.json', '.luarc.jsonc', '.luacheckrc', '.stylua.toml', 'stylua.toml', 'selene.toml', 'selene.yml', '.git' },
+      capabilities = capabilities,
       settings = {
         Lua = {
+          runtime = {
+            version = 'LuaJIT',
+          },
           diagnostics = {
-            globals = { "vim" },
+            globals = { 'vim' },
+          },
+          workspace = {
+            library = vim.api.nvim_get_runtime_file("", true),
+            checkThirdParty = false,
           },
           completion = {
             callSnippet = "Replace",
           },
-          workspace = {
-            library = vim.api.nvim_get_runtime_file("", true),
+          telemetry = {
+            enable = false,
           },
         },
       },
-      capabilities = capabilities,
     }
 
+    -- Clangd for C/C++
     vim.lsp.config.clangd = {
-      cmd = { 'clangd' },
+      cmd = {
+        "clangd",
+        "--background-index",
+        "--clang-tidy",
+        "--header-insertion=iwyu",
+        "--completion-style=detailed",
+        "--function-arg-placeholders",
+        "--cross-file-rename",
+      },
+      filetypes = { 'c', 'cpp', 'objc', 'objcpp', 'cuda', 'proto' },
+      root_markers = { '.clangd', '.clang-tidy', '.clang-format', 'compile_commands.json', 'compile_flags.txt', 'configure.ac', '.git' },
       capabilities = capabilities,
     }
 
+    -- Bash language server
     vim.lsp.config.bashls = {
       cmd = { 'bash-language-server', 'start' },
+      filetypes = { 'sh' },
+      root_markers = { '.git' },
       capabilities = capabilities,
     }
 
+    -- Docker language server
     vim.lsp.config.dockerls = {
       cmd = { 'docker-langserver', '--stdio' },
+      filetypes = { 'dockerfile' },
+      root_markers = { 'Dockerfile', '.git' },
       capabilities = capabilities,
     }
 
+    -- CMake language server
     vim.lsp.config.cmake = {
       cmd = { 'cmake-language-server' },
+      filetypes = { 'cmake' },
+      root_markers = { 'CMakeLists.txt', '.git' },
       capabilities = capabilities,
     }
 
-    -- Enable the LSP servers
-    vim.lsp.enable({
-      'lua_ls',
-      'clangd', 
-      'bashls',
-      'dockerls',
-      'cmake',
-    })
+    -- Enable all configured LSP servers
+    vim.lsp.enable({ 'lua_ls', 'clangd', 'bashls', 'dockerls', 'cmake' })
   end,
 }
