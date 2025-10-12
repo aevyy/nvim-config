@@ -10,19 +10,26 @@ return {
 
     nvimtree.setup({
       view = {
-        width = 35,
-        relativenumber = true,
-        cursorline = false, -- disable cursor line highlighting in file tree
+        width = 25, -- make file tree narrower
+        relativenumber = false, -- disable relative numbers in tree
+        number = false, -- disable line numbers in tree
+        cursorline = true, -- disable cursor line highlighting in file tree
       },
       -- change folder arrow icons
       renderer = {
         indent_markers = {
-          enable = true,
+          enable = false, -- disable indent markers to save space
         },
         highlight_git = true,
         highlight_opened_files = "name", -- highlight opened files by name only
         highlight_modified = "name", -- highlight modified files by name only
         icons = {
+          show = {
+            file = true,
+            folder = true,
+            folder_arrow = true,
+            git = false, -- hide git icons to save space
+          },
           glyphs = {
             folder = {
               arrow_closed = "", -- arrow when folder is closed
