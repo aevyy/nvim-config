@@ -82,3 +82,13 @@ vim.api.nvim_create_autocmd("VimEnter", {
     vim.defer_fn(setup_terminal_toggle, 100)
   end,
 })
+
+-- Live preview for HTML/web files
+keymap.set("n", "<leader>lp", "<cmd>LivePreview start<CR>", { desc = "Start live preview server" })
+keymap.set("n", "<leader>lx", "<cmd>LivePreview close<CR>", { desc = "Stop live preview server" })
+
+-- Quick open current file in browser (without live preview)
+keymap.set("n", "<leader>ob", function()
+  local filepath = vim.fn.expand("%:p")
+  vim.fn.jobstart({"xdg-open", filepath}, {detach = true})
+end, { desc = "Open current file in default browser" })
